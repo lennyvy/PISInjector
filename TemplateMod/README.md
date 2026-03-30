@@ -40,7 +40,6 @@ mods/
 
 ## Tips
 
-- **Debug console**: `AllocConsole()` + `freopen_s()` opens a CMD window in the game for debugging
 - **Keep DllMain short**: Only start a thread – no heavy operations
 - **Hooks**: For function hooking consider [MinHook](https://github.com/TsudaKageworker/minhook)
 - **Memory addresses**: Use Cheat Engine or ReClass to find addresses in the game
