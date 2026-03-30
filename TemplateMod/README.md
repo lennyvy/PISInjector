@@ -1,6 +1,6 @@
-# PIS Template Mod
+# LORT- PISInjector Template Mod
 
-A starter template for LORT mods that get injected into `LortGame-Win64-Shipping.exe`.
+A starter template for LORT mods that get injected via PISInjector into `LortGame-Win64-Shipping.exe`.
 
 ## Files
 
