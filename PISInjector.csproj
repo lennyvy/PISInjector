@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseWPF>true</UseWPF>
+
+    <!-- Publish settings: single self-contained .exe -->
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+  </PropertyGroup>
+
+  <!-- Exclude the mods folder from the build – it's user content, not part of the project -->
+  <ItemGroup>
+    <None Remove="mods\**" />
+    <Content Remove="mods\**" />
+  </ItemGroup>
+
+  <!--
+    Automatically publish as single-file .exe after every Release build.
+    The guard property "IsAutoPublish" prevents infinite recursion
+    (publish triggers build internally, which would trigger publish again).
+  -->
+  <Target Name="AutoPublish" AfterTargets="Build" Condition="'$(Configuration)' == 'Release' And '$(IsAutoPublish)' != 'true'">
+    <Message Importance="high" Text=">> Publishing single-file PISInjector.exe ..." />
+    <Exec Command="dotnet publish &quot;$(ProjectPath)&quot; -c Release -r win-x64 -p:IsAutoPublish=true" />
+    <Message Importance="high" Text=">> PISInjector.exe ready in: $(OutputPath)win-x64\publish\" />
+  </Target>
+
+</Project>

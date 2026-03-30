@@ -1,0 +1,19 @@
+; =============================================================================
+; TemplateMod.def – Module Definition File
+; =============================================================================
+; Diese Datei ist OPTIONAL. Sie wird nur gebraucht, wenn die DLL eigene
+; Funktionen exportieren soll (z.B. damit andere Tools die Mod erkennen).
+;
+; Für eine reine Injection-Mod ist sie NICHT nötig – der Mod-Code läuft
+; über DllMain/DLL_PROCESS_ATTACH, was keinen Export braucht.
+;
+; Falls du Exports willst (z.B. für eine API die andere Mods aufrufen können):
+;   1. Füge die Funktionsnamen unten unter EXPORTS hinzu
+;   2. Füge diese .def Datei in den Linker-Einstellungen ein:
+;      Projekt > Eigenschaften > Linker > Eingabe > Moduldefinitionsdatei
+; =============================================================================
+
+LIBRARY TemplateMod
+EXPORTS
+    ; Hier eigene Exports eintragen, z.B.:
+    ; GetModInfo

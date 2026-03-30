@@ -1,0 +1,58 @@
+// =============================================================================
+// TemplateMod.rc – Windows Resource-Datei
+// =============================================================================
+// Bettet eine VERSIONINFO-Resource in die DLL ein. Diese wird:
+//   1. Vom PISInjector automatisch ausgelesen (Name, Version, Author, Description)
+//   2. In Windows unter Rechtsklick > Eigenschaften > Details angezeigt
+//
+// Die Werte kommen aus resource.h – dort einfach ändern.
+//
+// EINRICHTEN in Visual Studio:
+//   Die .rc Datei wird automatisch erkannt wenn sie im Projekt ist.
+//   Falls nicht: Projekt > Hinzufügen > Vorhandenes Element > TemplateMod.rc
+// =============================================================================
+
+#include <winver.h>
+#include "resource.h"
+
+// =============================================================================
+// VERSIONINFO – Standard Windows-Versionsinformation
+// =============================================================================
+// Die Zahlen-Version (z.B. 1.0.0.0) wird für Vergleiche benutzt.
+// Die String-Version (z.B. "1.0.0") ist für die Anzeige.
+// =============================================================================
+
+VS_VERSION_INFO VERSIONINFO
+    FILEVERSION     MOD_VERSION_MAJOR, MOD_VERSION_MINOR, MOD_VERSION_PATCH, MOD_VERSION_BUILD
+    PRODUCTVERSION  MOD_VERSION_MAJOR, MOD_VERSION_MINOR, MOD_VERSION_PATCH, MOD_VERSION_BUILD
+    FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+    FILEFLAGS       0
+    FILEOS          VOS_NT_WINDOWS32
+    FILETYPE        VFT_DLL
+    FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+    // StringFileInfo – Textfelder die der PISInjector ausliest
+    BLOCK "StringFileInfo"
+    BEGIN
+        // 040904B0 = Deutsch (0409) + Unicode (04B0)
+        BLOCK "040904B0"
+        BEGIN
+            // Diese Felder liest der PISInjector aus:
+            VALUE "ProductName",        MOD_NAME            // → Mod-Name im Launcher
+            VALUE "ProductVersion",     MOD_VERSION_STR     // → Version im Launcher
+            VALUE "CompanyName",        MOD_AUTHOR          // → Author im Launcher
+            VALUE "FileDescription",    MOD_DESCRIPTION     // → Description im Launcher
+
+            // Standard-Windows-Felder (optional):
+            VALUE "FileVersion",        MOD_VERSION_STR
+            VALUE "InternalName",       "TemplateMod"
+            VALUE "OriginalFilename",   "TemplateMod.dll"
+        END
+    END
+
+    // VarFileInfo – Sprache/Codepage
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0409, 0x04B0
+    END
+END

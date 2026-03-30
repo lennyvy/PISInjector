@@ -1,0 +1,45 @@
+﻿<Window x:Class="PISModLauncher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PIS Mod Loader" Height="500" Width="650">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" /> <!-- Mod-List -->
+            <RowDefinition Height="Auto"/> <!-- Inject Button -->
+            <RowDefinition Height="150"/> <!-- Logging -->
+        </Grid.RowDefinitions>
+
+        <!-- Mod list with checkboxes, bound to the ModInfo collection -->
+        <ListView Name="ModsList" Grid.Row="0" Margin="0,0,0,10">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Enabled" Width="55">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding Enabled, Mode=TwoWay}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Mod Name"    DisplayMemberBinding="{Binding Name}"        Width="150"/>
+                    <GridViewColumn Header="Version"     DisplayMemberBinding="{Binding Version}"     Width="70"/>
+                    <GridViewColumn Header="Author"      DisplayMemberBinding="{Binding Author}"      Width="100"/>
+                    <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Description}" Width="200"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <!-- Inject Button -->
+        <Button Grid.Row="1"
+                Height="40"
+                Margin="0,0,0,10"
+                Content="Inject &amp; Load Mods"
+                Click="Inject_Click"/>
+
+        <!-- Logging -->
+        <TextBox Name="LogText" Grid.Row="2"
+                 IsReadOnly="True"
+                 VerticalScrollBarVisibility="Auto"
+                 TextWrapping="Wrap"/>
+    </Grid>
+</Window>

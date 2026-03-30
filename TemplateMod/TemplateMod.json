@@ -1,0 +1,6 @@
+{
+  "Name": "Template Mod",
+  "Version": "1.0.0",
+  "Author": "DeinName",
+  "Description": "Eine Vorlage die zeigt wie ein PIS-Mod aufgebaut ist. Öffnet eine Debug-Konsole im Spiel."
+}

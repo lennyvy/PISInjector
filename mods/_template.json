@@ -1,0 +1,24 @@
+{
+  "Name": "Example Mod",
+  "Version": "1.0.0",
+  "Author": "YourName",
+  "Description": "A short description of what this mod does."
+}
+
+// =====================================================
+// ANLEITUNG:
+// 1. Kopiere diese Datei und benenne sie wie deine DLL:
+//    MeinMod.dll  →  MeinMod.json
+//
+// 2. Fülle die Felder aus:
+//    Name        = Anzeigename im Launcher
+//    Version     = Versionsnummer
+//    Author      = Dein Name
+//    Description = Kurze Beschreibung
+//
+// 3. Alle Felder sind optional.
+//    Ohne JSON wird der Dateiname als Name verwendet.
+//
+// 4. DIESE Datei (_template.json) wird vom Launcher
+//    ignoriert, weil es keine _template.dll gibt.
+// =====================================================
