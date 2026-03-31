@@ -1,25 +1,25 @@
 // =============================================================================
-// TemplateMod.rc – Windows Resource-Datei
+// TemplateMod.rc – Windows Resource-File
 // =============================================================================
-// Bettet eine VERSIONINFO-Resource in die DLL ein. Diese wird:
-//   1. Vom PISInjector automatisch ausgelesen (Name, Version, Author, Description)
-//   2. In Windows unter Rechtsklick > Eigenschaften > Details angezeigt
+// Embeds a VERSIONINFO-Resource into your DLL. This will:
+//   1. Get read by the PISInjector automaticlly (Name, Version, Author, Description)
+//   2. Viewable in Windows under (RIGHTCLICK) > Properties > view details
 //
-// Die Werte kommen aus resource.h – dort einfach ändern.
+// The Values come from resource.h – change them there.
 //
-// EINRICHTEN in Visual Studio:
-//   Die .rc Datei wird automatisch erkannt wenn sie im Projekt ist.
-//   Falls nicht: Projekt > Hinzufügen > Vorhandenes Element > TemplateMod.rc
+// SETUP in Visual Studio:
+//   The .rc File gets read automaticlly if it is in the project.
+//   IF NOT: Project > Add > Existing Element > TemplateMod.rc
 // =============================================================================
 
 #include <winver.h>
 #include "resource.h"
 
 // =============================================================================
-// VERSIONINFO – Standard Windows-Versionsinformation
+// VERSIONINFO – Standart Windows-Versionsinformation
 // =============================================================================
-// Die Zahlen-Version (z.B. 1.0.0.0) wird für Vergleiche benutzt.
-// Die String-Version (z.B. "1.0.0") ist für die Anzeige.
+// The Number-Version (z.B. 1.0.0.0) gets used for comparisons.
+// The String-Version (z.B. "1.0.0") is for displaying.
 // =============================================================================
 
 VS_VERSION_INFO VERSIONINFO
@@ -31,26 +31,26 @@ VS_VERSION_INFO VERSIONINFO
     FILETYPE        VFT_DLL
     FILESUBTYPE     VFT2_UNKNOWN
 BEGIN
-    // StringFileInfo – Textfelder die der PISInjector ausliest
+    // StringFileInfo – Textfields that get read by the PISInjector
     BLOCK "StringFileInfo"
     BEGIN
-        // 040904B0 = Deutsch (0409) + Unicode (04B0)
+        // 040904B0 = German (0409) + Unicode (04B0)
         BLOCK "040904B0"
         BEGIN
-            // Diese Felder liest der PISInjector aus:
-            VALUE "ProductName",        MOD_NAME            // → Mod-Name im Launcher
-            VALUE "ProductVersion",     MOD_VERSION_STR     // → Version im Launcher
-            VALUE "CompanyName",        MOD_AUTHOR          // → Author im Launcher
-            VALUE "FileDescription",    MOD_DESCRIPTION     // → Description im Launcher
+            // This Field reads the PISInjector:
+            VALUE "ProductName",        MOD_NAME            // → Mod-Name in the Injector
+            VALUE "ProductVersion",     MOD_VERSION_STR     // → Version in the Injector
+            VALUE "CompanyName",        MOD_AUTHOR          // → Author in the Injector
+            VALUE "FileDescription",    MOD_DESCRIPTION     // → Description in the Injector
 
-            // Standard-Windows-Felder (optional):
+            // Standart-Windows-Fields (optional):
             VALUE "FileVersion",        MOD_VERSION_STR
             VALUE "InternalName",       "TemplateMod"
             VALUE "OriginalFilename",   "TemplateMod.dll"
         END
     END
 
-    // VarFileInfo – Sprache/Codepage
+    // VarFileInfo – Language/Codepage
     BLOCK "VarFileInfo"
     BEGIN
         VALUE "Translation", 0x0409, 0x04B0
