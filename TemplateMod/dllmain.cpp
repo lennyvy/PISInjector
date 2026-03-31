@@ -1,72 +1,72 @@
 // =============================================================================
-// PIS Template Mod – dllmain.cpp
+// PISInjector Template Mod – dllmain.cpp
 // =============================================================================
 //
-// Dies ist eine Vorlage für eine PIS-Mod-DLL. Sie wird vom PISModLoader
-// per DLL-Injection in den Spielprozess (LortGame-Win64-Shipping.exe) geladen.
+// This is a template mod for the PISInjector. This .dll gets injected via PISInjector into the 
+// (LortGame-Win64-Shipping.exe) game process.
 //
-// ABLAUF:
-//   1. PISInjector.exe erkennt die DLL im "mods" Ordner und zeigt sie in der Liste an.
-//      Mod-Infos werden gelesen aus (in dieser Reihenfolge):
-//        a) TemplateMod.json    – JSON-Datei neben der DLL (höchste Priorität)
-//        b) VERSIONINFO         – In die DLL kompiliert (aus resource.h / TemplateMod.rc)
-//        c) Dateiname           – Fallback wenn nichts anderes vorhanden
-//   2. Der User klickt "Inject & Load Mods".
-//   3. PISModLoader.dll injiziert diese DLL in den laufenden Spielprozess.
-//   4. Windows ruft automatisch DllMain() mit DLL_PROCESS_ATTACH auf.
-//   5. Ab hier läuft dein Mod-Code IM Spielprozess.
+// Process:
+//   1. PISInjector.exe registers the mods straight from the "mods" folder and show it in the programm.
+//      Mod-Infos are read in in this order:
+//        a) TemplateMod.json    – JSON-File next to the DLL (highest priority)
+//        b) VERSIONINFO         – gets compiled in the .dll file (from resource.h / TemplateMod.rc)
+//        c) Dateiname           – Fallback if nothing else is presented
+//   2. The user presses "Inject & Load Mods".
+//   3. PISModLoader.dll injects this .dll into the running Gameprocess.
+//   4. Windows calls the DllMain() automaticlly with DLL_PROCESS_ATTACH.
+//   5. Then your mod code runs.
 //
-// WICHTIG:
-//   - Diese DLL läuft NICHT im Launcher, sondern im Spiel!
-//   - DllMain sollte so kurz wie möglich sein (keine langen Operationen).
-//   - Für aufwendige Logik einen eigenen Thread starten (siehe unten).
+// IMPORTANT:
+//   - This DLL does NOT run in the launcher itself, but in the game process!
+//   - DllMain should be as short as possible (no long operations).
+//   - To create more complex code create a new thread (view below).
 //
-// BAUEN:
-//   - Visual Studio > Neues Projekt > "Dynamic-Link Library (DLL)" (C++)
-//   - Plattform: x64 (muss zum Spiel passen)
-//   - Dateien: dllmain.cpp, resource.h, TemplateMod.rc
-//   - Release bauen, die .dll in den "mods" Ordner kopieren.
-//   - JSON optional daneben legen (überschreibt VERSIONINFO im Launcher).
+// BUILD:
+//   - Visual Studio (recommended) > new project > "Dynamic-Link Library (DLL)" (C++)
+//   - Plattform: x64 (must match the game)
+//   - Files: dllmain.cpp, resource.h, TemplateMod.rc
+//   - Build as release, theh copy .dll to the "mods" folder of the PISInjector.
+//   - Put your JSON optional next to the .dll (overrides VERSIONINFO in the Launcher).
 //
 // =============================================================================
 
 #include <Windows.h>
 #include <cstdio>
-#include "resource.h"       // MOD_NAME, MOD_VERSION_STR etc. (für VERSIONINFO)
+#include "resource.h"       // MOD_NAME, MOD_VERSION_STR etc. (for your VERSIONINFO)
 
 // =============================================================================
-// Vorwärtsdeklaration: Dein eigentlicher Mod-Code (läuft in einem eigenen Thread)
+// Fronterdeclaration: Your actual Mod-Code (runs in its own Thread)
 // =============================================================================
 DWORD WINAPI ModMain(LPVOID lpParameter);
 
 // =============================================================================
-// DllMain – Einstiegspunkt der DLL
+// DllMain – Entry-Point of the DLL
 // =============================================================================
-// Wird von Windows aufgerufen, sobald die DLL in einen Prozess geladen wird.
-// ACHTUNG: In DllMain darf man NICHT:
-//   - Andere DLLs laden (LoadLibrary)
-//   - Auf Synchronisationsobjekte warten
-//   - Lange Operationen ausführen
-// Deshalb starten wir hier nur einen Thread und kehren sofort zurück.
+// Gets calld by Windows, as soon as the DLL gets loaded into the process.
+// IMPORTANT: In your DllMain do NOT:
+//   - Load other DLLs (LoadLibrary)
+//   - Wait for sync objects
+//   - execute  long operations
+// Thats why we just start a thread here and go back after
 // =============================================================================
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
     switch (ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
-        // DLL wurde in den Spielprozess geladen.
-        // DisableThreadLibraryCalls: Wir brauchen keine Thread-Attach/Detach Benachrichtigungen.
+        // DLL gets loaded into the game process.
+        // DisableThreadLibraryCalls: We don't need a Thread-Attach/Detach notifiation.
         DisableThreadLibraryCalls(hModule);
 
-        // Eigenen Thread starten, damit DllMain sofort zurückkehren kann.
-        // hModule wird als Parameter übergeben, falls wir es später brauchen
-        // (z.B. um den Pfad der DLL zu ermitteln oder FreeLibraryAndExitThread aufzurufen).
+        // Start own Thread, so your gets back DllMain instantly.
+        // hModule gets transfered as parameter, if needed later
+        // (for example to find the path of your DLL or to call FreeLibraryAndExitThread).
         CreateThread(nullptr, 0, ModMain, hModule, 0, nullptr);
         break;
 
     case DLL_PROCESS_DETACH:
-        // DLL wird entladen (Spiel beendet sich oder DLL wird manuell entladen).
-        // Hier Cleanup machen: Hooks entfernen, Speicher freigeben, etc.
+        // DLL gets unloaded (Game process closes or DLL gets manually unloaded).
+        // Here: Cleanup (Remove Hooks, Free Disk, etc.)
         break;
     }
 
@@ -74,62 +74,62 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 }
 
 // =============================================================================
-// ModMain – Dein Mod-Code (eigener Thread)
+// ModMain – Your Mod-Code (own Thread)
 // =============================================================================
-// Hier kannst du alles machen was du willst:
-//   - Speicher des Spiels lesen/schreiben
-//   - Funktionen hooken
-//   - Eigene Fenster erstellen
-//   - Dateien lesen/schreiben
-//   - usw.
+// Here you can do whatever you want:
+//   - Read/Write memory of the game
+//   - function hooks
+//   - create your own window
+//   - Read/Write Files
+//   - ...
 // =============================================================================
 DWORD WINAPI ModMain(LPVOID lpParameter)
 {
-    // Das hModule der DLL – übergeben von DllMain
+    // The hModule of your DLL – transfered from DllMain
     HMODULE hModule = static_cast<HMODULE>(lpParameter);
 
-    // --- Beispiel: Debug-Konsole öffnen (hilfreich zum Entwickeln) ---
-    AllocConsole();                                     // Neue Konsole erstellen
+    // --- Example: Debug-Console opened (VERY HELPFULL BTW ;-;) ---
+    AllocConsole();                                     // creates new console
     FILE* console = nullptr;
-    freopen_s(&console, "CONOUT$", "w", stdout);        // stdout auf die Konsole umleiten
+    freopen_s(&console, "CONOUT$", "w", stdout);        // stdout transmitted to console
 
     printf("[TemplateMod] Mod geladen! PID: %lu\n", GetCurrentProcessId());
     printf("[TemplateMod] DLL-Handle: 0x%p\n", hModule);
     printf("[TemplateMod] Basisadresse des Spiels: 0x%p\n", GetModuleHandle(nullptr));
 
     // =================================================================
-    // AB HIER: Dein eigentlicher Mod-Code
+    // From here: your actual own Mod-Code
     // =================================================================
     //
-    // Beispiele was du hier machen könntest:
+    // Some small examples to get to know the enviroment:
     //
-    // 1) Speicher lesen:
+    // 1) Read Memory:
     //    uintptr_t baseAddr = (uintptr_t)GetModuleHandle(nullptr);
     //    int health = *(int*)(baseAddr + 0x12345);
     //
-    // 2) Speicher schreiben:
+    // 2) Write Memory:
     //    *(int*)(baseAddr + 0x12345) = 9999;
     //
-    // 3) Funktion hooken (z.B. mit MinHook):
+    // 3) Hook function (MinHook recommended):
     //    MH_CreateHook(targetFunc, hookedFunc, &originalFunc);
     //
-    // 4) Endlosschleife für kontinuierliche Aktionen:
+    // 4) Endlessloop for continuing actions:
     //    while (true) { ... Sleep(100); }
     //
     // =================================================================
 
-    // Beispiel: Einfache Schleife die zeigt, dass der Mod läuft
+    // Example: Simple Loop that shows, that your mod runs
     for (int i = 0; i < 10; i++)
     {
         printf("[TemplateMod] Tick %d/10\n", i + 1);
         Sleep(1000);    // 1 Sekunde warten
     }
 
-    printf("[TemplateMod] Mod fertig. Konsole bleibt offen.\n");
+    printf("[TemplateMod] Mod ready. Console stays opened.\n");
 
-    // Wenn der Mod fertig ist und sich selbst entladen soll:
+    // If Mod is done and should unload itself:
     // FreeLibraryAndExitThread(hModule, 0);
-    // ACHTUNG: Nach FreeLibraryAndExitThread darf KEIN Code mehr kommen!
+    // ATTENTION: After FreeLibraryAndExitThread should come NOTHING MORE!
 
     return 0;
 }
